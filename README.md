@@ -34,7 +34,7 @@ Teniendo en cuenta los conceptos vistos de condición de carrera y sincronizaci�
 
 Sincronización y Dead-Locks.
 
-![](http://files.explosm.net/comics/Matt/Bummed-forever.png)
+![](http://files.explosm.net/comics/Matt/Bummed-forever)
 
 1. Revise el programa “highlander-simulator”, dispuesto en el paquete edu.eci.arsw.highlandersim. Este es un juego en el que:
 
