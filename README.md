@@ -19,6 +19,8 @@ Esto se debe a que el peroductor agrega números a la cola cada 1 segundo, mient
 ![imagen](https://github.com/user-attachments/assets/27e2b1c0-6016-4fd2-91f5-30b348a925b1)
 
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
+![imagen](https://github.com/user-attachments/assets/a99077c7-b95c-49f0-aafe-c8c66a14e7a1)
+![imagen](https://github.com/user-attachments/assets/267c5e0d-3fa6-455e-bc61-8410af384e0d)
 
 
 ##### Parte II. – Antes de terminar la clase.
