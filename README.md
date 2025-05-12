@@ -53,6 +53,11 @@ Sincronización y Dead-Locks.
 
 5. Verifique nuevamente el funcionamiento (haga clic muchas veces en el botón). Se cumple o no el invariante?.
 
+	- En este caso, el invariante no se cumple y, símplemente el acumulado va en aumento:
+	![imagen](https://github.com/user-attachments/assets/b62b9973-2e06-422e-8640-58bd0ccb2b86)
+	![imagen](https://github.com/user-attachments/assets/941e8839-1b90-4f97-b007-ff0bf33d3c76)
+	![imagen](https://github.com/user-attachments/assets/c2941758-2aab-489b-9061-663e701d9367)
+
 6. Identifique posibles regiones críticas en lo que respecta a la pelea de los inmortales. Implemente una estrategia de bloqueo que evite las condiciones de carrera. Recuerde que si usted requiere usar dos o más ‘locks’ simultáneamente, puede usar bloques sincronizados anidados:
 
 	```java
