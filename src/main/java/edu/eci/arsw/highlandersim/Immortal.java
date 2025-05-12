@@ -34,13 +34,13 @@ public class Immortal extends Thread {
     }
 
     public void run() {
-        while (true) {
-            synchronized (pauseLock) {
-                while (paused) {
+        while (!stopped) {
+            if (paused) {
+                synchronized (pauseLock) {
                     try {
                         pauseLock.wait();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        return;
                     }
                 }
             }
@@ -57,9 +57,9 @@ public class Immortal extends Thread {
             this.fight(im);
 
             try {
-                Thread.sleep(1);
+                Thread.sleep(1); // o el tiempo que usas
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                return;
             }
         }
     }

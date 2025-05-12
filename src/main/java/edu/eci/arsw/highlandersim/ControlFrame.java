@@ -162,12 +162,16 @@ public class ControlFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (immortals != null) {
                     for (Immortal im : immortals) {
-                        im.stopThread();
+                        im.stopThread();  // Detener hilo
                     }
+
+                    // Desactivar botones una sola vez
+                    btnResume.setEnabled(false);
+                    btnPauseAndCheck.setEnabled(false);
+                    btnStart.setEnabled(true); // permitir reinicio si quieres
                 }
             }
         });
-
 
     }
 

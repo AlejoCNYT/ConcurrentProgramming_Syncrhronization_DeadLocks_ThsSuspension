@@ -1,0 +1,9 @@
+Se presentó una condición de carrera al permitir el acceso concurrente a la lista compartida de inmortales y a los estados internos mutables de cada uno (salud). Cuando se ejecutó la simulación con una gran cantidad de inmortales (por ejemplo 1000), se observaron comportamientos inconsistentes como sumas de salud incorrectas, peleas reportadas contra inmortales muertos, y ocasionalmente el congelamiento de la interfaz.
+
+Para corregir este problema sin hacer uso de sincronización global (que volvería lenta la simulación), se tomaron las siguientes medidas:
+
+1. La lista de inmortales se volvió inmutable usando `Collections.unmodifiableList` luego de ser creada, para evitar su modificación accidental.
+2. Cada instancia de Immortal ahora encapsula su estado de salud y lo protege con un `Object healthLock` que se usa en métodos `getHealth()` y `changeHealth()` mediante bloques `synchronized`.
+3. Con esta estrategia se evita bloquear el acceso completo a la lista, pero se garantiza seguridad en el acceso concurrente a la información crítica de cada inmortal.
+
+Después de aplicar estos cambios, la simulación se mantuvo estable incluso con 10,000 inmortales en ejecución simultánea.
