@@ -2,6 +2,7 @@ package edu.eci.arsw.highlandersim;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import javax.swing.JScrollBar;
 
 public class ControlFrame extends JFrame {
 
-    private static final int DEFAULT_IMMORTAL_HEALTH = 100;
+    private static final int DEFAULT_IMMORTAL_HEALTH = 10000;
     private static final int DEFAULT_DAMAGE_VALUE = 10;
 
     private JPanel contentPane;
@@ -35,7 +36,7 @@ public class ControlFrame extends JFrame {
     private JLabel statisticsLabel;
     private JScrollPane scrollPane;
     private JTextField numOfImmortals;
-
+    private final Object healthLock = new Object();
 
     /**
      * Launch the application.
@@ -157,27 +158,36 @@ public class ControlFrame extends JFrame {
         statisticsLabel = new JLabel("Immortals total health:");
         contentPane.add(statisticsLabel, BorderLayout.SOUTH);
 
+        btnStop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (immortals != null) {
+                    for (Immortal im : immortals) {
+                        im.stopThread();
+                    }
+                }
+            }
+        });
+
+
     }
 
     public List<Immortal> setupInmortals() {
+        ImmortalUpdateReportCallback ucb = new TextAreaUpdateReportCallback(output, scrollPane);
+        List<Immortal> il = new LinkedList<>(); // MOVER AQUÍ
 
-        ImmortalUpdateReportCallback ucb=new TextAreaUpdateReportCallback(output,scrollPane);
-        
         try {
             int ni = Integer.parseInt(numOfImmortals.getText());
 
-            List<Immortal> il = new LinkedList<Immortal>();
-
             for (int i = 0; i < ni; i++) {
-                Immortal i1 = new Immortal("im" + i, il, DEFAULT_IMMORTAL_HEALTH, DEFAULT_DAMAGE_VALUE,ucb);
+                Immortal i1 = new Immortal("im" + i, il, DEFAULT_IMMORTAL_HEALTH, DEFAULT_DAMAGE_VALUE, ucb);
                 il.add(i1);
             }
-            return il;
         } catch (NumberFormatException e) {
             JOptionPane.showConfirmDialog(null, "Número inválido.");
             return null;
         }
 
+        return Collections.unmodifiableList(il);
     }
 
 }
@@ -186,12 +196,14 @@ class TextAreaUpdateReportCallback implements ImmortalUpdateReportCallback{
 
     JTextArea ta;
     JScrollPane jsp;
+    private int health;
+    private final Object healthLock = new Object();
 
     public TextAreaUpdateReportCallback(JTextArea ta,JScrollPane jsp) {
         this.ta = ta;
         this.jsp=jsp;
-    }       
-    
+    }
+
     @Override
     public void processReport(String report) {
         ta.append(report);
@@ -205,6 +217,18 @@ class TextAreaUpdateReportCallback implements ImmortalUpdateReportCallback{
         }
         );
 
+    }
+
+    public void changeHealth(int v) {
+        synchronized (healthLock) {
+            health = v;
+        }
+    }
+
+    public int getHealth() {
+        synchronized (healthLock) {
+            return health;
+        }
     }
 
 }
