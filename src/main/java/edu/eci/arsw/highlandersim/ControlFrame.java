@@ -36,6 +36,7 @@ public class ControlFrame extends JFrame {
     private JScrollPane scrollPane;
     private JTextField numOfImmortals;
 
+
     /**
      * Launch the application.
      */
@@ -87,31 +88,47 @@ public class ControlFrame extends JFrame {
         JButton btnPauseAndCheck = new JButton("Pause and check");
         btnPauseAndCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                // Pausar todos los hilos
+                for (Immortal im : immortals) {
+                    im.pauseThread();
+                }
 
-                /*
-				 * COMPLETAR
-                 */
+                // Esperar hasta que todos estén realmente en estado pausado
+                boolean allPaused;
+                do {
+                    allPaused = true;
+                    for (Immortal im : immortals) {
+                        if (!im.isPaused()) {
+                            allPaused = false;
+                            break;
+                        }
+                    }
+                    try {
+                        Thread.sleep(10); // Pequeña espera para evitar ocupación de CPU
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                } while (!allPaused);
+
+                // Ahora es seguro leer los valores
                 int sum = 0;
                 for (Immortal im : immortals) {
                     sum += im.getHealth();
                 }
 
-                statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
-                
-                
-
+                statisticsLabel.setText("<html>" + immortals.toString() + "<br>Health sum:" + sum);
             }
         });
+
         toolBar.add(btnPauseAndCheck);
 
         JButton btnResume = new JButton("Resume");
 
         btnResume.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                /**
-                 * IMPLEMENTAR
-                 */
-
+                for (Immortal im : immortals) {
+                    im.resumeThread();
+                }
             }
         });
 
@@ -135,7 +152,7 @@ public class ControlFrame extends JFrame {
         output = new JTextArea();
         output.setEditable(false);
         scrollPane.setViewportView(output);
-        
+
         
         statisticsLabel = new JLabel("Immortals total health:");
         contentPane.add(statisticsLabel, BorderLayout.SOUTH);
@@ -189,5 +206,5 @@ class TextAreaUpdateReportCallback implements ImmortalUpdateReportCallback{
         );
 
     }
-    
+
 }

@@ -6,7 +6,9 @@ import java.util.Random;
 public class Immortal extends Thread {
 
     private ImmortalUpdateReportCallback updateCallback=null;
+
     
+
     private int health;
     
     private int defaultDamageValue;
@@ -17,6 +19,8 @@ public class Immortal extends Thread {
 
     private final Random r = new Random(System.currentTimeMillis());
 
+    private volatile boolean paused = false;
+    private final Object pauseLock = new Object();
 
     public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
         super(name);
@@ -28,21 +32,26 @@ public class Immortal extends Thread {
     }
 
     public void run() {
-
         while (true) {
+            synchronized (pauseLock) {
+                while (paused) {
+                    try {
+                        pauseLock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             Immortal im;
-
             int myIndex = immortalsPopulation.indexOf(this);
-
             int nextFighterIndex = r.nextInt(immortalsPopulation.size());
 
-            //avoid self-fight
             if (nextFighterIndex == myIndex) {
-                nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+                nextFighterIndex = (nextFighterIndex + 1) % immortalsPopulation.size();
             }
 
             im = immortalsPopulation.get(nextFighterIndex);
-
             this.fight(im);
 
             try {
@@ -50,9 +59,7 @@ public class Immortal extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
     public void fight(Immortal i2) {
@@ -79,6 +86,21 @@ public class Immortal extends Thread {
     public String toString() {
 
         return name + "[" + health + "]";
+    }
+
+    public void pauseThread() {
+        paused = true;
+    }
+
+    public void resumeThread() {
+        synchronized (pauseLock) {
+            paused = false;
+            pauseLock.notify();
+        }
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
 }
